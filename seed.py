@@ -4,6 +4,10 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from src.infrastructure.models.orm import Base, ZoneORM, MachineORM, ApplicatorORM, ApplicatorState
 
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://applicator_user:secretpassword@localhost:5432/applicator_db")
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
+elif DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
 
 async def seed():
     engine = create_async_engine(DATABASE_URL)
