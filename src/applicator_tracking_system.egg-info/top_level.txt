@@ -1,0 +1,8 @@
+__init__
+application
+config
+domain
+infrastructure
+main
+presentation
+tests

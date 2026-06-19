@@ -1,0 +1,11 @@
+FROM nginx:alpine
+
+# Copy nginx config
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Copy frontend source files
+COPY ./frontend/operator /usr/share/nginx/html/operator
+COPY ./frontend/admin /usr/share/nginx/html/admin
+COPY ./frontend/login /usr/share/nginx/html/login
+
+EXPOSE 80

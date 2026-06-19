@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applicator Tracking System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Machine Dashboard: <span id="machine-id">Loading...</span></h1>
+            <div class="status">
+                Capacity: <span id="capacity-count">0/0</span>
+            </div>
+        </header>
+        
+        <main>
+            <div id="applicator-grid" class="grid">
+                <!-- Applicators will be rendered here dynamically -->
+            </div>
+        </main>
+
+        <div id="scanner-status" class="toast hidden">Scan Detected!</div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

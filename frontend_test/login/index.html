@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fujikura — Вхід</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="login-container">
+        <div class="brand">
+            <div class="logo">F</div>
+            <h1>Система обліку аплікаторів</h1>
+            <p style="color:#6b7280;margin-top:8px;font-size:0.9rem">Fujikura Manufacturing</p>
+        </div>
+
+        <div class="auth-card">
+            <h2 style="margin-bottom:24px;font-size:1.1rem;color:#374151">Вхід до системи</h2>
+
+            <div id="errorMsg" class="error-msg" style="display:none"></div>
+
+            <div class="form-group">
+                <label>Логін</label>
+                <input type="text" id="username" placeholder="Введіть логін" autocomplete="username" />
+            </div>
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" id="password" placeholder="Введіть пароль" autocomplete="current-password" />
+            </div>
+
+            <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">Увійти</button>
+
+            <div style="margin-top:20px;padding:16px;background:#f0f4ff;border-radius:8px;font-size:0.82rem;color:#6b7280">
+                <strong>Демо-акаунти:</strong><br>
+                Адмін: <code>admin</code> / <code>admin123</code><br>
+                Оператор: <code>operator</code> / <code>operator123</code>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

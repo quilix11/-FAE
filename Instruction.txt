@@ -1,0 +1,51 @@
+# Project context: Applicator Tracking System (Enterprise Grade)
+
+## 1. System Overview
+Create a robust backend and frontend application to track the physical location and state of applicators across a manufacturing plant. The system must enforce strict business rules, capacity limits, and hardware integration via USB HID barcode scanners.
+
+## 2. Tech Stack
+* **Backend:** Python 3.10+, FastAPI, Pydantic, SQLAlchemy 2.0.
+* **Database:** PostgreSQL (with Alembic for migrations).
+* **Frontend:** Vanilla JS / HTML / CSS (or lightweight framework) with global event listeners for HID barcode scanners.
+* **Deployment:** Docker Compose (Application, DB, Nginx proxy). Environment configuration synchronized via a State-Vault architecture per physical machine.
+
+## 3. Database Schema (SQLAlchemy Models)
+Do NOT hardcode machine names. Use a normalized structure.
+
+* `User`: `id`, `username`, `hashed_password`, `role` (Enum: `Operator`, `Tech_Admin`).
+* `Zone`: `id`, `name`, `max_capacity` (int), `max_in_use` (int). 
+    * *Zones to seed:* "Aplicator room" (capacity: 300), "Service", "Cutting" (capacity: 5, in_use: 2), "Crimping" (capacity: 3, in_use: 1), "Blocked", "Unused".
+* `Machine`: `id`, `hardware_code` (VARCHAR, unique identifier like 'G05', 'S04'), `zone_id` (ForeignKey).
+* `Applicator`: `id`, `serial_number` (VARCHAR, unique), `current_zone_id` (ForeignKey), `current_machine_id` (ForeignKey, Nullable), `machine_state` (Enum: `in_use`, `on_rack`, `none`).
+* `MovementLog`: `id`, `applicator_id`, `user_id`, `from_location`, `to_location`, `timestamp`.
+* `BlockLog`: `id`, `applicator_id`, `user_id`, `reason`, `timestamp`.
+
+## 4. Strict Business Rules & Validations
+
+### 4.1. Movement & Lifecycle
+* **No Implicit Unbinding:** An applicator is rigidly bound to a `Machine` until it is explicitly scanned at the "Service" or "Aplicator room" terminals. Scanning a new applicator on a machine does NOT release the previous one.
+* **Capacity Blocking:** Before linking an applicator to a machine, query the machine's associated `Zone`. If the count of applicators on this machine $\ge$ `Zone.max_capacity`, abort the transaction with HTTP 400: "Capacity limit reached. Return unused applicators to Service".
+* **State Selector Rule:** A machine has sub-states. An applicator on a machine is either `in_use` (installed in the press) or `on_rack` (laying nearby). Enforce limits: Cutting zone allows max 2 `in_use`. Crimping allows max 1 `in_use`.
+
+### 4.2. Role-Based Access Control (RBAC)
+* Applicators in "Blocked" or "Unused" zones CANNOT be moved to production. They can only be moved to the "Service" zone, and ONLY by a user with the `Tech_Admin` role.
+* Applicators in the "Service" zone can only be released to production if confirmed by a `Tech_Admin`.
+
+## 5. Required API Endpoints
+* `POST /auth/login`: JWT token generation.
+* `GET /api/dashboard/{hardware_code}`: Returns the current state of a specific machine, including max capacity, current count, and a nested list of attached applicators with their `machine_state` (`in_use` or `on_rack`).
+* `POST /api/scan`: The core endpoint. Accepts `{"serial_number": str, "terminal_hardware_code": str}`. Resolves the terminal's location and performs the bind/unbind logic based on the rules.
+* `PATCH /api/applicator/{id}/state`: Updates the `machine_state` (`in_use` vs `on_rack`) via a manual UI toggle.
+
+## 6. Frontend & Hardware Integration
+* **Barcode Scanner Hook:** Implement a global JS event listener on `keydown`. 
+    * Measure the time between keystrokes.
+    * If a string of characters ends with the `Enter` key (13) AND the total input time is $< 100ms$, treat it as a scanner input.
+    * Prevent default browser behavior, clear the buffer, and send the payload to `POST /api/scan`.
+* **UI Dashboard:** Display a grid representing the machine. Show $N$ slots based on capacity. Occupied slots must have a visual toggle (button/dropdown) allowing the operator to manually switch the applicator's status between "On Rack" (Yellow) and "In Press" (Green).
+* **Context Awareness:** The frontend must initialize reading a local environment variable or URL parameter (e.g., `?machine=G05`) to know which `hardware_code` to send with API requests.
+
+## 7. Docker Architecture
+* Ensure PostgreSQL uses persistent named volumes.
+* Application must be stateless.
+* Include a `docker-compose.yml` that boots the entire stack locally with one command.

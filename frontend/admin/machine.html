@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Керування машиною — Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="machine.css" />
+</head>
+<body>
+    <div class="machine-layout">
+        <header class="machine-header">
+            <div class="machine-header__left">
+                <a href="/admin/" class="back-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    До панелі
+                </a>
+                <div>
+                    <h1 class="machine-header__title" id="machineTitle">—</h1>
+                    <span class="machine-header__zone" id="zoneName">—</span>
+                </div>
+            </div>
+            <div class="machine-header__right">
+                <span class="badge badge--admin">TECH ADMIN</span>
+                <button class="btn btn-danger" id="deleteMachineBtn">Видалити машину</button>
+            </div>
+        </header>
+
+        <main class="machine-main">
+            <section class="capacity-section">
+                <div class="capacity-header">
+                    <h2>Завантаженість</h2>
+                    <span class="capacity-count" id="capacityCount">— / —</span>
+                </div>
+                <div class="bar-wrap"><div class="bar-fill" id="capacityFill" style="width:0%"></div></div>
+            </section>
+
+            <div class="machine-actions">
+                <button class="btn btn-primary" id="addApplicatorBtn">+ Додати аплікатор</button>
+            </div>
+
+            <section class="card-grid" id="cardGrid"></section>
+            <div class="empty-state" id="emptyState" hidden>
+                <p>На цій машині немає аплікаторів</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add applicator modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Додати аплікатор</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Серійний номер</label>
+                    <input type="text" id="newSerial" class="search-input" style="width:100%" placeholder="APP-0001" />
+                </div>
+                <div class="form-group" style="margin-top:16px;">
+                    <label>Стан</label>
+                    <select id="newState" class="search-input" style="width:100%">
+                        <option value="on_rack">На стійці</option>
+                        <option value="in_use">В пресі</option>
+                        <option value="none">Немає</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" style="margin-top:24px;width:100%" id="submitAddBtn">Додати</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="machine.js?v=1"></script>
+</body>
+</html>

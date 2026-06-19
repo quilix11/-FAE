@@ -1,0 +1,63 @@
+[project]
+name = "applicator-tracking-system"
+version = "0.1.0"
+description = "Enterprise Applicator Tracking System using Hexagonal Architecture & DDD"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.103.0",
+    "uvicorn>=0.23.2",
+    "sqlalchemy>=2.0.20",
+    "asyncpg>=0.28.0",
+    "psycopg2-binary>=2.9.9",
+    "pydantic>=2.3.0",
+    "pydantic-settings>=2.0.3",
+    "dishka>=0.2.0",
+    "alembic>=1.12.0",
+    "pyjwt>=2.8.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.6",
+    "websockets>=12.0",
+    "gunicorn>=21.2.0",
+    "broadcaster>=0.2.0"
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D",       # pydocstyle (docstrings)
+    "S101",    # use of assert
+    "ANN",     # flake8-annotations (handled by mypy)
+    "PT",      # pytest-style
+    "FBT",     # boolean-trap
+    "TD",      # todos
+    "FIX",     # fixme
+    "EM",      # error-message
+    "TRY003",  # try-except
+    "B008",    # function call in default arg (FastAPI Depends)
+    "RUF009",  # perform function call in dataclass default
+    "BLE",     # blind except
+    "ARG",     # unused arguments
+    "COM812",  # trailing comma
+    "ISC001",  # implicit string concatenation
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/tests/*" = ["S106", "PLR2004"]
+
+[tool.mypy]
+strict = true
+exclude = ["^src/tests/"]
+
+[[tool.mypy.overrides]]
+module = ["src.tests.*", "tests.*"]
+disable_error_code = ["no-untyped-def", "no-untyped-call", "attr-defined", "arg-type", "union-attr"]
+ignore_missing_imports = true
+

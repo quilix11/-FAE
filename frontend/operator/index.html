@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Оператор — Fujikura</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__title-group">
+                <h1 class="header__title">Панель оператора</h1>
+                <span class="header__subtitle" id="zoneName">Завантаження…</span>
+            </div>
+            <div class="header__right">
+                <span class="header__badge" id="machineCode">—</span>
+                <button class="header__logout" id="logoutBtn" title="Вийти">Вийти</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="capacity-section" id="capacitySection">
+            <div class="capacity-header">
+                <h2 class="capacity-header__title">Завантаженість</h2>
+                <span class="capacity-header__count" id="capacityCount">— / —</span>
+            </div>
+            <div class="capacity-bar">
+                <div class="capacity-bar__fill" id="capacityFill" style="width: 0%"></div>
+            </div>
+        </section>
+
+        <div class="scan-bar">
+            <input type="text" id="manualScanInput" placeholder="Серійний номер аплікатора..." />
+            <button id="manualScanBtn" class="btn-scan">Сканувати</button>
+        </div>
+        <p class="scan-hint">Щоб додати аплікатор на машину — відскануйте серійний номер (аплікатор має бути зареєстрований адміном).</p>
+
+        <section class="card-grid" id="cardGrid"></section>
+
+        <div class="empty-state" id="emptyState" hidden>
+            <svg class="empty-state__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <p class="empty-state__text">Немає аплікаторів на цій машині</p>
+        </div>
+    </main>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="app.js?v=3"></script>
+</body>
+</html>

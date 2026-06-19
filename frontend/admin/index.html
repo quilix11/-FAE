@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Панель адміністратора — Fujikura</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar__brand">
+                <div class="sidebar__logo">F</div>
+                <div class="sidebar__brand-text">Applicator Control</div>
+            </div>
+            <nav class="sidebar__nav">
+                <a href="#overview" class="nav-item active">Огляд</a>
+                <a href="#machines" class="nav-item">Машини</a>
+                <a href="#applicators" class="nav-item">Аплікатори</a>
+                <a href="#operators" class="nav-item">Оператори</a>
+                <a href="#blocked" class="nav-item">Заблоковані</a>
+                <a href="#history" class="nav-item">Історія</a>
+            </nav>
+            <button class="sidebar__logout" id="logoutBtn">Вийти</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div>
+                    <h1 class="header__title">Панель керування</h1>
+                    <span class="badge badge--admin">TECH ADMIN</span>
+                </div>
+                <div class="header__actions">
+                    <button class="btn btn--refresh" id="refreshBtn">Оновити</button>
+                    <div class="clock" id="clock">--:--:--</div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <!-- KPIs -->
+                <section class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-card__label">Всього аплікаторів</div>
+                        <div class="kpi-card__value" id="kpiTotal">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-card__label">В пресі</div>
+                        <div class="kpi-card__value text-primary" id="kpiInUse">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-card__label">На стійці</div>
+                        <div class="kpi-card__value text-info" id="kpiOnRack">0</div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-card__label">Повні машини</div>
+                        <div class="kpi-card__value text-danger" id="kpiFull">0</div>
+                    </div>
+                </section>
+
+                <!-- Zones Overview -->
+                <section class="section" id="overview">
+                    <h2 class="section__title">Зони</h2>
+                    <div class="zone-grid" id="zoneGrid">
+                        <!-- Zones rendered here -->
+                    </div>
+                </section>
+
+                <!-- Machines -->
+                <section class="section" id="machines">
+                    <div class="section__header">
+                        <div>
+                            <h2 class="section__title">Машини</h2>
+                            <p class="section__hint">Натисніть на машину для керування аплікаторами</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openMachineModal()">+ Додати машину</button>
+                    </div>
+                    <div class="machine-grid" id="machineGrid">
+                        <!-- Machines rendered here -->
+                    </div>
+                </section>
+
+                <!-- Applicators -->
+                <section class="section" id="applicators">
+                    <div class="section__header">
+                        <h2 class="section__title">All Applicators</h2>
+                        <div style="display: flex; gap: 12px;">
+                            <input type="text" id="searchInput" class="search-input" placeholder="Search by Serial Number..." />
+                            <button class="btn btn-primary" onclick="openApplicatorModal()">+ Add Applicator</button>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Serial Number</th>
+                                    <th>Machine</th>
+                                    <th>Zone</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applicatorTableBody">
+                                <!-- Applicators rendered here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Operators -->
+                <section class="section" id="operators">
+                    <div class="section__header">
+                        <div>
+                            <h2 class="section__title">Оператори / Користувачі</h2>
+                            <p class="section__hint">Створення облікових записів операторів та адміністраторів</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openUserModal()">+ Додати оператора</button>
+                    </div>
+                </section>
+
+                <!-- Blocked applicators -->
+                <section class="section" id="blocked">
+                    <div class="section__header">
+                        <div>
+                            <h2 class="section__title">Заблоковані аплікатори</h2>
+                            <p class="section__hint">Браковані / зняті з експлуатації — у зоні Blocked</p>
+                        </div>
+                        <button class="btn btn--refresh" onclick="loadBlocked()">Оновити</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Serial Number</th>
+                                    <th>Причина</th>
+                                    <th>Коли</th>
+                                    <th>Ким</th>
+                                    <th>Дії</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blockedTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Movement history -->
+                <section class="section" id="history">
+                    <div class="section__header">
+                        <div>
+                            <h2 class="section__title">Історія переміщень</h2>
+                            <p class="section__hint">Останні дії: сканування, зняття з машини, блокування</p>
+                        </div>
+                        <button class="btn btn--refresh" onclick="loadHistory()">Оновити</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Час</th>
+                                    <th>Serial Number</th>
+                                    <th>Звідки</th>
+                                    <th>Куди</th>
+                                    <th>Користувач</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="machineModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Machine</h2>
+                <button class="close-btn" onclick="closeModals()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Hardware Code</label>
+                    <input type="text" id="newMachineCode" class="search-input" style="width:100%" placeholder="e.g. M01" />
+                </div>
+                <div class="form-group" style="margin-top:16px;">
+                    <label>Zone</label>
+                    <select id="newMachineZone" class="search-input" style="width:100%">
+                        <option value="">Loading zones...</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" style="margin-top:24px; width:100%" onclick="submitMachine()">Add Machine</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="applicatorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Applicator</h2>
+                <button class="close-btn" onclick="closeModals()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Serial Number</label>
+                    <input type="text" id="newAppSerial" class="search-input" style="width:100%" placeholder="e.g. APP-001" />
+                </div>
+                <div class="form-group" style="margin-top:16px;">
+                    <label>Машина (необов'язково)</label>
+                    <select id="newAppMachine" class="search-input" style="width:100%">
+                        <option value="">— Без машини —</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-top:16px;">
+                    <label>State</label>
+                    <select id="newAppState" class="search-input" style="width:100%">
+                        <option value="none">None</option>
+                        <option value="on_rack">On Rack</option>
+                        <option value="in_use">In Use</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" style="margin-top:24px; width:100%" onclick="submitApplicator()">Add Applicator</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Додати оператора</h2>
+                <button class="close-btn" onclick="closeModals()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Роль</label>
+                    <select id="newUserRole" class="search-input" style="width:100%" onchange="onUserRoleChange()">
+                        <option value="Operator">Оператор</option>
+                        <option value="Tech_Admin">Адміністратор</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-top:16px;">
+                    <label>Логін (username)</label>
+                    <input type="text" id="newUserName" class="search-input" style="width:100%" placeholder="напр. operator2" />
+                </div>
+                <div class="form-group" style="margin-top:16px;">
+                    <label>Пароль</label>
+                    <input type="password" id="newUserPassword" class="search-input" style="width:100%" placeholder="Пароль" />
+                </div>
+                <div class="form-group" style="margin-top:16px;" id="operatorCodeGroup">
+                    <label>Код оператора (з бейджика)</label>
+                    <input type="text" id="newUserOperatorCode" class="search-input" style="width:100%" placeholder="напр. OP_002" />
+                </div>
+                <button class="btn btn-primary" style="margin-top:24px; width:100%" onclick="submitUser()">Створити</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="historyModal" class="modal">
+        <div class="modal-content" style="max-width:640px;">
+            <div class="modal-header">
+                <h2 id="historyModalTitle">Історія аплікатора</h2>
+                <button class="close-btn" onclick="closeModals()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Час</th>
+                                <th>Звідки</th>
+                                <th>Куди</th>
+                                <th>Користувач</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyModalBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="app.js?v=6"></script>
+</body>
+</html>
