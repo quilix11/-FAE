@@ -5,6 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from config import settings
 
 DATABASE_URL = settings.DATABASE_URL
+import sys
+print(f"DEBUG_DB_URL: {DATABASE_URL!r}", file=sys.stderr)
+
 if DATABASE_URL.startswith("postgresql://"):
     DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 elif DATABASE_URL.startswith("postgres://"):
